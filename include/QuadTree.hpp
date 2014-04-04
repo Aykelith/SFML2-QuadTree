@@ -1,5 +1,5 @@
-#ifndef QUADTREE_HPP
-#define QUADTREE_HPP
+#ifndef XAL_QUADTREE_HPP
+#define XAL_QUADTREE_HPP
 
 #include <SFML/Graphics.hpp>
 
@@ -7,24 +7,42 @@
 
 #include "Global.hpp"
 
+namespace xal
+{
+
 class QuadTree
 {
 public:
+	QuadTree();
 	QuadTree(sf::FloatRect size);
+	void setSize(sf::FloatRect size);
 
-	bool insert(sf::RectangleShape &object);
+	bool insert(sf::Sprite &object, bool isStatic);
+
+	bool updateDynamicObjects();
+
 	sf::FloatRect getRect();
-	std::vector<sf::RectangleShape*> getObjects(sf::Vector2f pos);
 
-	void draw(sf::RenderWindow &window);
+	std::vector<sf::Sprite*> getStaticObjectsWhereIs(sf::FloatRect object);
+
+	#if DEV
+		void draw(sf::RenderWindow &window);
+	#endif
 private:
-	static const uint m_maxSize = 4;
-	uint m_actualSize = 0;
+	static const uint m_maxObjects = 4;
+	uint m_actualObjects;
 
 	sf::FloatRect m_size;
-	std::vector<sf::RectangleShape*> m_objects;
+	std::vector<sf::Sprite*> m_staticObjects;
+	std::vector<sf::Sprite*> m_dynamicObjects;
 
-	sf::RectangleShape m_rect;
+	#if DEV
+		sf::RectangleShape m_rect;
+	#endif
+
+	#if TILESRECT
+		std::vector<sf::RectangleShape> m_staticRects;
+	#endif
 
 	QuadTree* m_NW;
 	QuadTree* m_NE;
@@ -33,5 +51,7 @@ private:
 
 	bool subdivide();
 };
+
+}
 
 #endif
